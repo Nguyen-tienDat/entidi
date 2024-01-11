@@ -1,80 +1,82 @@
-def number_of_students():
-    numStudents = int(input("The number of students in class: "))
-    return numStudents
+#list of dict
+student_list = []
+course_list = []
+mark_list = []
 
-def student_info():
-    studentID = str(input("\nStudent ID: "))
-    studentName = str(input("Student Name: "))
-    studentDoB = str(input("Date of Birth (DD/MM/YYYY): "))
-    return [studentID, studentName, studentDoB]
+def student_number():
+    s_num = int(input("Enter the number students: "))
+    return s_num
 
-def number_of_courses():
-    numCourses = int(input("\nCourse's number: "))
-    return numCourses
+def student_info(s_num):
+    for _ in range(s_num):
+        s_id = input("\nEnter student ID: ")
+        s_name = input("Enter student name: ")
+        s_dob = input("Enter student's birth of date: ")
+        student_list.append({'ID': s_id, 'Name': s_name, 'DoB': s_dob})
+    return student_list 
 
-def course_info():
-    courseID = str(input("\nCourse ID: "))
-    courseName = str(input("Course Name: "))
-    return [courseID, courseName]
+def course_number():
+    n_course = int(input("\nEnter the number of courses: "))
+    return n_course
 
-def select_course_to_mark(courseList):
-    print("Select course to mark: ")
-    for i in range(len(courseList)):
-        print(f"{i+1}.{courseList[i][1]}")
-    courseNum = int(input("Enter the course number: "))
-    num_students_to_mark = int(input("Enter the number of students to mark: "))
-    students_and_marks = []
-    for i in range(num_students_to_mark):
-        studentID = input("Enter the student ID to mark: ")
-        courseMark = int(input(f"Enter the mark for Student {studentID}: "))
-        students_and_marks.append((studentID, courseMark))
-    return courseList[courseNum-1], students_and_marks
+def course_info(n_course):
+    for _ in range(n_course):
+        c_id = input("\nEnter the course ID: ")
+        c_name = input("Enter the course name: ")
+        course_list.append({'ID': c_id, 'Name': c_name})
+    return course_list 
 
-def list_courses(courseList):
+def get_marks(student_list, course_list):
+    for course in course_list:
+        course_id = course['ID']
+        course_name = course['Name']
+        print(f"\nEntering marks for {course_name}: ")
+        for student in student_list:
+            student_id = student['ID']
+            student_name = student['Name']
+            mark = int(input(f"Enter the mark of {student_name} in {course_name}: "))
+            mark_list.append({'CourseID': course_id, 'StudentID': student_id, 'Mark': mark})
+    return mark_list
+
+def list_courses():
     print("\nCourse's List: ")
-    for i in range(len(courseList)):
-        print(f"Course {courseList[i][0]} - {courseList[i][1]}")
+    for course in course_list:
+        print(f"{course['ID']} : {course['Name']}")
 
-def list_students(studentList):
+def list_students():
     print("\nStudent's List: ")
-    for i in range(len(studentList)):
-        print(f"Student {studentList[i][0]}, Name: {studentList[i][1]}, DoB: {studentList[i][2]}")
+    for student in student_list:
+        print(f"{student['ID']} : {student['Name']} : {student['DoB']}")
 
-def list_student_marks_for_given_course(courseList, studentCourseMarks):
-    print("\nScore's List:")
-    for i in range(len(courseList)):
-        courseID = courseList[i][0]
-        courseName = courseList[i][1]
-        marks = studentCourseMarks[i]
-        print(f"\nCourse {courseID} - {courseName}:")
-        for studentID, mark in marks.items():
-            print(f"  Student {studentID}: {mark}")
+def list_marks(mark_list, course_id):
+    if course_id not in [course['ID'] for course in course_list]:
+        print("Invalid course ID. Please try again!")
+        return
+    for course in course_list:
+        if course['ID'] == course_id:
+            print(f"\nMarks for {course['Name']}: ")
+            break
+    for mark in mark_list:
+        if mark['CourseID'] == course_id:
+            for student in student_list:
+                if student['ID'] == mark['StudentID']:
+                    student_name = student['Name']
+                    break
+            print(f"{student_name}: {mark['Mark']}")
 
 def main():
-    global courseList, studentList, studentCourseMarks
-    studentList = []
-    courseList = []
-    studentCourseMarks = []
+    s_num = student_number()
+    student_info(s_num)
 
-    numStudents = number_of_students()
-    for i in range(numStudents):
-        studentList.append(student_info())
+    n_course = course_number()
+    course_info(n_course)
 
-    numCourses = number_of_courses()
-    for i in range(numCourses):
-        courseList.append(course_info())
-    
-    for i in range(numCourses):
-        studentCourseMarks.append({})
+    mark_list = get_marks(student_list, course_list)
 
-    for i in range(numCourses):
-        course, students_and_marks = select_course_to_mark(courseList)
-        courseID = course[0]
-        for studentID, mark in students_and_marks:
-            studentCourseMarks[i][studentID] = mark
+    list_courses()
+    list_students()
+    course_id = input("\nEnter the course ID to show marks: ")
+    list_marks(mark_list, course_id)
 
-    list_students(studentList)
-    list_courses(courseList)
-    list_student_marks_for_given_course(courseList, studentCourseMarks)
-
-main()
+if __name__ == "__main__":
+    main()
