@@ -1,10 +1,9 @@
-from input import get_student_info, get_course_info, get_mark_info
-from output import display_students
-from domains import Student, Course, System
+from domains.student import Student
+from domains.course import Course
+from domains.mark import Mark
+from input import get_int_input
 
-def main():
-    system = System()
-
+if __name__ == '__main__':
     while True:
         print("_______Student Management System_______\n")
         print("1. ADD INFORMATION OF STUDENT")
@@ -16,38 +15,50 @@ def main():
         print("7. STUDENT'S GPA")
         print("8. EXIT!")
 
-        choice = int(input("Enter the option: "))
+        choice = get_int_input("Enter the option: ")
 
         if choice == 1:
-            student_info = get_student_info()
-            student = Student(*student_info)
+            Student.student_Add()
         elif choice == 2:
-            course_info = get_course_info()
-            course = Course(*course_info)
+            Course.course_Add()
         elif choice == 3:
-            mark_info = get_mark_info()
-            system.add_Mark(*mark_info)
+            if len(Student.student_list) == 0 or len(Course.course_list) == 0:
+                print("\nPlease add information of students and courses first!\n")
+            else:
+                Mark.add_Mark()
         elif choice == 4:
-            Student.student_List()
+            if len(Student.student_list) == 0:
+                print("\n No student added yet!")
+                continue
+            else:
+                Student.student_List()
         elif choice == 5:
-            Course.list_courses()
+            if len(Course.course_list) == 0:
+                print("No courses added yet!\n")
+                continue
+            else:
+                Course.list_courses()
         elif choice == 6:
-            for mark in system.marks:
-                print(mark.mark_Info())
+            if len(Course.course_list) == 0 and len(Mark.mark_list) == 0: 
+                    print("No data to display.\n")
+                    continue
+            else:
+                    Mark.list_Mark()   
         elif choice == 7:
-            student_id = int(input("Enter the student ID to check the GPA: "))
+            student_id = int(input("Enter the student ID to check GPA: "))
             student = next((s for s in Student.student_list if s.id == student_id), None)
             if not student:
                 print("Student not found")
                 continue
-            gpa = student.calc_GPA()
-            print(f"GPA of the student is : {gpa}")
-        elif choice == 8:
-            break
+            else:
+                gpa = student.calculate_GPA()
+                print(f"The GPA is {gpa}")
+        elif choice == 8:  
+            print(" Exit  Program...... \n")
+            break           
+            
         else:
             print("Please enter a valid option.")
 
         print("___Update Completed____")
-
-if __name__ == '__main__':
-    main()
+           
